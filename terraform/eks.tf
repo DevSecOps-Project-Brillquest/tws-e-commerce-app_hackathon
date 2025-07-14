@@ -17,6 +17,26 @@ resource "aws_security_group" "node_group_remote_access" {
   }
 }
 
+resource "aws_iam_role" "eks_access" {
+  name = "EKSAccessRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        AWS = "arn:aws:iam::370042934168:root"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_access_attach" {
+  role       = aws_iam_role.eks_access.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
 module "eks" {
 
   source  = "terraform-aws-modules/eks/aws"
@@ -31,7 +51,7 @@ module "eks" {
   access_entries = {
     # One access entry with a policy associated
     example = {
-      principal_arn = "arn:aws:iam::876997124628:user/terraform"
+      principal_arn = "arn:aws:iam::370042934168:role/EKSAccessRole"
 
       policy_associations = {
         example = {
