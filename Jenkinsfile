@@ -5,8 +5,8 @@ pipeline {
     
     environment {
         // Update the main app image name to match the deployment file
-        DOCKER_IMAGE_NAME = 'laxg66/easyshop-app'
-        DOCKER_MIGRATION_IMAGE_NAME = 'laxg66/easyshop-migration'
+        DOCKER_IMAGE_NAME = 'sbadisia/easyshop-app'
+        DOCKER_MIGRATION_IMAGE_NAME = 'sbadisia/easyshop-migration'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         GITHUB_CREDENTIALS = credentials('github-credentials')
         GIT_BRANCH = "master"
@@ -24,7 +24,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 script {
-                    clone("https://github.com/lax66/tws-e-commerce-app_hackathon.git","master")
+                    clone("https://github.com/DevSecOps-Project-Brillquest/tws-e-commerce-app_hackathon.git","master")
                 }
             }
         }
@@ -108,17 +108,19 @@ pipeline {
         
         // Add this new stage
         stage('Update Kubernetes Manifests') {
-            steps {
-                script {
-                    update_k8s_manifests(
-                        imageTag: env.DOCKER_IMAGE_TAG,
-                        manifestsPath: 'kubernetes',
-                        gitCredentials: 'github-credentials',
-                        gitUserName: 'Jenkins CI',
-                        gitUserEmail: 'misc.lucky66@gmail.com'
-                    )
-                }
-            }
+    steps {
+        script {
+            update_k8s_manifests(
+                imageTag: env.DOCKER_IMAGE_TAG,
+                manifestsPath: 'kubernetes',
+                gitRepo: 'https://github.com/sureshb987/tws-e-commerce-app_hackathon.git',
+                gitBranch: 'master',
+                gitCredentials: 'github-credentials',
+                gitUserName: 'sureshb987',
+                gitUserEmail: 'bsuresh5453@gmail.com'
+            )
         }
     }
+}
+}
 }
